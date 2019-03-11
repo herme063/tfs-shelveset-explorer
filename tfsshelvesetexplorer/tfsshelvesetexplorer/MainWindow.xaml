@@ -44,6 +44,12 @@
                 <Button Grid.Row="1" Grid.Column="3" Height="24" Width="100" Content="View Shelveset(s)" Command="{Binding Main.ViewCommand}" />
             </Grid>
 
+			<StatusBar DockPanel.Dock="Bottom">
+				<StatusBarItem>
+					<TextBlock Text="{Binding Main.Status}" />
+				</StatusBarItem>
+			</StatusBar>
+			
             <xcdg:DataGridControl AutoCreateColumns="True" 
                                   SelectedItem="{Binding Main.SelectedRow}"
                                   ItemsSource="{Binding Source={StaticResource DataSource}}">

@@ -31,6 +31,7 @@ namespace tfsshelvesetexplorer.ViewModel
 		private string _serverUrl;
 		private string _userName;
 		private string _ownerName;
+		private string _status;
 		private ObservableCollection<MainRowViewModel> _rows;
 		private readonly IShelvesetService _shelvesetService;
 		private readonly IBackupService _backupService;
@@ -42,6 +43,7 @@ namespace tfsshelvesetexplorer.ViewModel
 		public string OwnerName { get { return _ownerName; } set { Set(ref _ownerName, value); } }
 		public ObservableCollection<MainRowViewModel> Rows { get { return _rows; } set { Set(ref _rows, value); } }
 		public MainRowViewModel SelectedRow { get; set; }
+		public string Status { get { return _status; } set { Set(ref _status, value); } }
 
 		public ICommand ViewCommand { get; private set; }
 
@@ -78,17 +80,36 @@ namespace tfsshelvesetexplorer.ViewModel
 		{
 			if (new[] { _serverUrl, _userName, _ownerName }.All(s => !string.IsNullOrWhiteSpace(s)))
 			{
-				DispatcherHelper.CheckBeginInvokeOnUI(() => IsBusy = true);
-
-				List<IShelveset> shelvesets = await Task.Run(() => _shelvesetService.GetShelvesetByOwner(_serverUrl, _userName, _ownerName)
-					.OrderByDescending(e => e.LastModificationTime)
-					.ToList());
-				List<MainRowViewModel> rows = shelvesets.Select(s => new MainRowViewModel(s)).ToList();
 				DispatcherHelper.CheckBeginInvokeOnUI(() =>
 				{
-					IsBusy = false;
-					Rows = new ObservableCollection<MainRowViewModel>(rows);
+					IsBusy = true;
+					Status = string.Empty;
 				});
+
+				var rows = new List<MainRowViewModel>();
+				try
+				{
+					List<IShelveset> shelvesets = await Task.Run(() => _shelvesetService.GetShelvesetByOwner(_serverUrl, _userName, _ownerName)
+						.OrderByDescending(e => e.LastModificationTime)
+						.ToList());
+					rows = shelvesets.Select(s => new MainRowViewModel(s)).ToList();
+				}
+				catch(Exception ex)
+				{
+					DispatcherHelper.CheckBeginInvokeOnUI(() =>
+					{
+						Status = $"we have a problems: {ex.Message}";
+					});
+				}
+				finally
+				{
+					DispatcherHelper.CheckBeginInvokeOnUI(() =>
+					{
+						IsBusy = false;
+						Rows = new ObservableCollection<MainRowViewModel>(rows);
+					});
+				}
+
 				_defaultParameterService.DefaultServerUrl = _serverUrl;
 				_defaultParameterService.DefaultUserName = _userName;
 			}
