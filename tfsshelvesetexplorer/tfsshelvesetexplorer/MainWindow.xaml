@@ -3,17 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:tfsshelvesetexplorer"
-        xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         DataContext="{StaticResource Locator}"
         mc:Ignorable="d"
         Title="TFS Shelveset Explorer" Height="350" Width="525">
-    <Window.Resources>
-        <xcdg:DataGridCollectionViewSource x:Key="DataSource" Source="{Binding Main.Rows}" />
-    </Window.Resources>
 
-    <xctk:BusyIndicator IsBusy="{Binding Main.IsBusy}">
+	<xctk:BusyIndicator IsBusy="{Binding Main.IsBusy}">
         <DockPanel>
             <Grid DockPanel.Dock="Top" Margin="2">
                 <Grid.RowDefinitions>
@@ -50,12 +46,12 @@
 				</StatusBarItem>
 			</StatusBar>
 			
-            <xcdg:DataGridControl AutoCreateColumns="True" 
-                                  SelectedItem="{Binding Main.SelectedRow}"
-                                  ItemsSource="{Binding Source={StaticResource DataSource}}">
-                <xcdg:DataGridControl.Columns>
-                    <xcdg:UnboundColumn FieldName="Id" Width="25">
-                        <xcdg:UnboundColumn.CellContentTemplate>
+            <DataGrid AutoGenerateColumns="false" 
+					  SelectedItem="{Binding Main.SelectedRow}"
+					  ItemsSource="{Binding Main.Rows}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="">
+						<DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="DownloadButtonClick">
@@ -65,11 +61,11 @@
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>
-                        </xcdg:UnboundColumn.CellContentTemplate>
-                    </xcdg:UnboundColumn>
-                    <xcdg:Column Title="Name" FieldName="Name" Width="*" />
-                </xcdg:DataGridControl.Columns>
-            </xcdg:DataGridControl>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
         </DockPanel>
     </xctk:BusyIndicator>
 </Window>

@@ -15,7 +15,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
-using Microsoft.Practices.ServiceLocation;
 using tfsshelvesetexplorer.Implementation;
 using tfsshelvesetexplorer.Services;
 
@@ -32,8 +31,6 @@ namespace tfsshelvesetexplorer.ViewModel
         /// </summary>
         public ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-
 			////if (ViewModelBase.IsInDesignModeStatic)
 			////{
 			////    // Create design time view services and models
@@ -57,7 +54,7 @@ namespace tfsshelvesetexplorer.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
+                return SimpleIoc.Default.GetInstance<MainViewModel>();
             }
         }
         
